@@ -1,2 +1,22 @@
 ---
-# tasks file for ansible-tomcat7
+# Installing Packages
+- name: Install Tomcat7 (Ubuntu)
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - tomcat7
+    - libtcnative-1
+    - libapr1
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install Tomcat7 (Debian)
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - tomcat7
+  when: ansible_distribution == 'Debian'
+
+- name: Install Tomcat7 (Amazon Linux)
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - tomcat7
+    - tomcat-native
+  when: ansible_distribution == 'Amazon'
