@@ -20,3 +20,31 @@
     - tomcat7
     - tomcat-native
   when: ansible_distribution == 'Amazon'
+
+# Creating Tomcat Symlinks
+- name: Symlink to /usr/local/tomcat
+  file: dest=/usr/local/tomcat state=link src=/var/lib/tomcat7
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+- name: Symlink to /usr/local/tomcat
+  file: dest=/usr/local/tomcat state=link src=/usr/share/tomcat7
+  when: ansible_distribution == 'Amazon'
+
+# Setting Deploy Directory File Permissions
+- name: Set Tomcat Deployment Directory Permissions
+  file: dest=/usr/local/tomcat/webapps state=directory owner={{ tomcat_user }}  group={{ tomcat_user }}  mode=0775
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+# Creating Service Configuration
+- name: Configuring Tomcat Service (Ubuntu / Debian)
+  template: src=tomcat7.j2 dest=/etc/default/tomcat7 owner=root group=root mode=0644
+  notify: restart_tomcat
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+- name: Configuring Tomcat Service (Amazon)
+  template: src=tomcat7.conf.j2 dest=/etc/tomcat7/tomcat7.conf owner={{ tomcat_user }}  group={{ tomcat_user }}  mode=644
+  notify: restart_tomcat
+  when: ansible_distribution == 'Amazon'
+
+- name: Enable Tomcat Service
+  service: name=tomcat7 enabled=yes

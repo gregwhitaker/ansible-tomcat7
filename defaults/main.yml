@@ -1,2 +1,9 @@
 ---
-# defaults file for ansible-tomcat7
+# Tomcat system user
+tomcat_user: tomcat7
+
+# JAVA_OPTS for Tomcat: memory
+tomcat_xmx: 512m
+
+# JAVA_OPTS for Tomcat: everything else
+tomcat_extra_opts: ""
